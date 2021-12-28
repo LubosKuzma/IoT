@@ -24,7 +24,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "HTS221Sensor.h"
 #include "LPS22HBSensor.h"
 
-
 RGB_LED rgbled;                 // RGB Led used for special functions
 EEPROMInterface secure_mem;     // Secure Memory holds SSID and password 
 
@@ -197,7 +196,7 @@ int disconnect_mqtt_network() {
 }
 
 
-int publish_mqtt(char* f1_payload, char* f2_payload) {
+int publish_mqtt(char* f1_payload, char* f2_payload, char* f3_payload) {
 
   int rc;
   MQTT::Message message;
@@ -205,7 +204,7 @@ int publish_mqtt(char* f1_payload, char* f2_payload) {
   // assemble message
   Serial.print("Publish function - ");
   char msg_buf[100];
-  sprintf(msg_buf, "field1=%s&field2=%s", f1_payload, f2_payload);
+  sprintf(msg_buf, "field1=%s&field2=%s&field3=%s", f1_payload, f2_payload, f3_payload);
   Serial.println(msg_buf);
   message.qos = MQTT::QOS0;
   message.retained = false;
@@ -263,16 +262,16 @@ void loop() {
   
   
   if (hasWifi){
-    publish_mqtt(temp_buf, hum_buf);
+    publish_mqtt(temp_buf, hum_buf, press_buf);
    } else {
     init_Wifi();
   }
   sprintf(temp_buf, "Temperature: %.0f", temperature);
   sprintf(hum_buf, "Humidity: %.0f", humidity);
   sprintf(press_buf, "Pressure: %.0f", pressure);
-
-  Screen.print(2, temp_buf);
-  Screen.print(3, hum_buf);
+  Screen.print(1, temp_buf);
+  Screen.print(2, hum_buf);
+  Screen.print(3, press_buf);
   Serial.println(temp_buf);
   Serial.println(hum_buf);
   Serial.println(press_buf);
